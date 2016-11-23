@@ -1,0 +1,13 @@
+parameters:
+    avtonom_limit_number_calls.voter.class: Avtonom\LimitNumberCallsBundle\Security\LimitCallsVoter
+
+services:
+    avtonom_limit_number_calls.voter:
+        class: "%avtonom_limit_number_calls.voter.class%"
+        public: false
+        arguments:
+            - "@avtonom_limit_number_calls.manager"
+            - "@security.token_storage"
+            - ~
+        tags:
+           - { name: security.voter }

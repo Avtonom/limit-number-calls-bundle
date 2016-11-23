@@ -1,0 +1,16 @@
+parameters:
+    avtonom_limit_number_calls.repository.class: Avtonom\LimitNumberCallsBundle\Manager\LimitCallsRepository
+    avtonom_limit_number_calls.manager.class: Avtonom\LimitNumberCallsBundle\Manager\LimitCallsManager
+
+services:
+    avtonom_limit_number_calls.manager:
+        class: %avtonom_limit_number_calls.manager.class%
+        arguments:
+            - "@avtonom_limit_number_calls.repository"
+        calls:
+            - [ setRules, ["%avtonom_limit_number_calls.rules%"]]
+
+    avtonom_limit_number_calls.repository:
+        class: %avtonom_limit_number_calls.repository.class%
+        arguments:
+             - "@snc_redis.snc_redis_lnc"
