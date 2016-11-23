@@ -18,6 +18,8 @@ Page bundle: https://github.com/Avtonom/limit-number-calls-bundle
 Maybe in the future:
 
 * Do the work with the console commands more convenient
+* Expose the core of the application in a simple version which does not depend on the Symfony
+* minor edits. I will be grateful for the help
 
 #### List console commands (CLI)
 * avtonom:limit-calls:add - add the execution of the request in the statistics (does not establish a lock. But check for blocking)
