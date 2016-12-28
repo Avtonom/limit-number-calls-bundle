@@ -37,7 +37,7 @@ Maybe in the future:
 * blocking_duration: 600 # second ( 1m = 60s ) - [OPTIONAL] blocking duration
 * group: sms_group or [sms_group, other_group] - [OPTIONAL] association in a list or group with several groups
 * subject_class: Avtonom\*****\ObjectInterface - Retreiving class or interface to run Symfony Security Voter
-* subject_method: [getParameter, phone] or getParameter - [OPTIONAL] The method or the method for obtaining attribute values of object
+* subject_method: getParameter or [getParameter, phone] or [ [getParameter, phone], [getParameter, ip] ]- [OPTIONAL] The method or the method for obtaining attribute values of object
 
 #### To Install
 
@@ -89,11 +89,27 @@ Configuration options (parameters.yaml):
 
 parameters:
     avtonom_limit_number_calls.rules:
+        sms_1m_10_rule:
+            time_period: 60000000 # microsecond ( 1m = 60s * 1000 000 microsecond )
+            maximum_number: 10
+            blocking_duration: 600 # second ( 1m = 60s )
+            group: sms_group
+            subject_class: *****\ObjectInterface
+            subject_method: [getParameter, phone]
         sms_1m_rule:
             time_period: 60000000 # microsecond ( 1m = 60s * 1000 000 microsecond )
             maximum_number: 1
             blocking_duration: 600 # second ( 1m = 60s )
             group: sms_group
+            subject_class: *****\ObjectInterface
+            subject_method:
+                - [getParameter, phone]
+                - [getParameter, text]
+        sms_30m_30_rule:
+            time_period: 1800000000 # microsecond ( 30m = 1m * 30 = 30 * 60s * 1000 000 microsecond )
+            maximum_number: 30
+            blocking_duration: 86400 # second ( 1d = 86400 second = 25h * 60m * 60s )
+            group: [sms_group, other]
             subject_class: *****\ObjectInterface
             subject_method: [getParameter, phone]
         sms_30m_rule:
@@ -102,7 +118,9 @@ parameters:
             blocking_duration: 86400 # second ( 1d = 86400 second = 25h * 60m * 60s )
             group: [sms_group, other]
             subject_class: *****\ObjectInterface
-            subject_method: [getParameter, phone]
+            subject_method:
+                - [getParameter, phone]
+                - [getParameter, text]
 
         test_minimum:
             time_period: 1800

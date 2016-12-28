@@ -104,18 +104,30 @@ class LimitCallsManager implements LimitCallsManagerInterface
      */
     protected function check($subject, $ruleName, $rule)
     {
+        $value = '';
         if(array_key_exists('subject_method', $rule)){
+            $arguments = [];
             if(is_array($rule['subject_method'])){
-                $subjectMethod = $rule['subject_method'][0];
-                $arguments = [$rule['subject_method'][1]];
+                if(!is_string($rule['subject_method'][0]) && is_array($rule['subject_method'][0])){
+                    $subjectMethod = [];
+                    foreach ($rule['subject_method'] as $method) {
+                        $subjectMethod[] = $method[0];
+                        $arguments[] = [$method[1]];
+                    }
+                } else {
+                    $subjectMethod = $rule['subject_method'][0];
+                    $arguments[] = $rule['subject_method'][1];
+                }
             } else {
                 $subjectMethod = $rule['subject_method'];
-                $arguments = [];
             }
-            if(!is_callable([$subject, $subjectMethod])){
-                throw new \LogicException(vsprintf('Method %s for class %s not callable', array(get_class($subject), $subjectMethod)));
+            if(!is_string($subjectMethod) && is_array($subjectMethod)){
+                foreach ($subjectMethod as $key => $subjectMethodOne) {
+                    $value .= $this->getSubjectValue($subject, $subjectMethodOne, $arguments[$key]);
+                }
+            } else {
+                $value = $this->getSubjectValue($subject, $subjectMethod, $arguments);
             }
-            $value = call_user_func_array(array($subject, $subjectMethod), $arguments);
         } else {
             $value = $subject;
         }
@@ -129,6 +141,21 @@ class LimitCallsManager implements LimitCallsManagerInterface
             return false;
         }
         return true;
+    }
+
+    /**
+     * @param Object $subject
+     * @param string $subjectMethod
+     * @param array $arguments
+     *
+     * @return mixed
+     */
+    protected function getSubjectValue($subject, $subjectMethod, $arguments)
+    {
+        if(!is_callable([$subject, $subjectMethod])){
+            throw new \LogicException(vsprintf('Method %s for class %s not callable', array($subjectMethod, get_class($subject))));
+        }
+        return call_user_func_array(array($subject, $subjectMethod), $arguments);
     }
 
     protected function prepareRules()
