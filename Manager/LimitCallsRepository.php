@@ -24,7 +24,7 @@ class LimitCallsRepository extends AbstractLimitCallsRepository
         $expireSecond = intval($periodMicrosecondFloat);
         $timeLimitMicrosecond = $nowMicrosecond - $timePeriod;
 
-        $now = \DateTime::createFromFormat('U.u', $nowMicrosecond);
+        $now = \DateTime::createFromFormat('U.u', number_format($nowMicrosecond, 6, '.', ''));
 
         $key = $this->getKey($collection, $value);
         $result = $this->getStorage()->pipeline()
